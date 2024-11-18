@@ -1,0 +1,81 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+body {
+  background-image: url("__BACKGROUND_IMAGE_URL__");
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.cookie-popup {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 800px;
+  background-color: #fff;
+  box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+  padding: 30px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  z-index: 1000;
+  text-align: center;
+}
+
+.cookie-popup h2 {
+  font-size: 24px;
+}
+.cookie-popup p {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+.cookie-popup .btn {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-allow {
+  background-color: #0073e6;
+  color: #fff;
+}
+.btn-allow:hover {
+  background-color: #005bb5;
+}
+.btn-settings {
+  background: #fff;
+  color: #0073e6;
+  text-decoration: underline;
+}
+.btn-settings:hover {
+  color: #fff;
+  background-color: #74abe3;
+}
