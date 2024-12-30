@@ -122,7 +122,7 @@ function callApi(a = 0) {
         : e.has("fbclid") && (tipo_ads = "fbclid");
     var d = new URLSearchParams(window.location.search),
       s =
-        (e.has("raads_source") && (is_redirected = 1),
+        (e.has("clickfast_source") && (is_redirected = 1),
         d.get("gclid") || d.get("msclkid") || d.get("fbclid")),
       l = d.get("wbraid") || d.get("gbraid"),
       n =
@@ -148,7 +148,7 @@ function callApi(a = 0) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(n),
       };
-    return fetch("http://localhost:3000/api/analytics", c)
+    return fetch("https://www.clickfast.com.br/api/analytics", c)
       .then((a) => a.json())
       .then((a) => a);
   } catch (a) {
@@ -176,7 +176,7 @@ function redirecionarComParametros(a) {
           (a = alterarParametro(plataforma_parametro[0], e, a)))
         : id_ads && (a = alterarParametro(plataforma_parametro[0], id_ads, a))),
     tipo_ads && id_ads && (a = alterarParametro(tipo_ads, id_ads, a)),
-    (a = alterarParametro("raads_source", "raads_redirect", a)),
+    (a = alterarParametro("clickfast_source", "clickfast_redirect", a)),
     (window.location.href = a));
 }
 
@@ -303,7 +303,7 @@ document.addEventListener("click", function (a) {
           (a.preventDefault(),
           idVisita
             ? ((t = { idVisita: idVisita, link: e }),
-              fetch("http://localhost:3000/api/analytics", {
+              fetch("https://www.clickfast.com/api/analytics", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(t),
