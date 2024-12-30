@@ -14,8 +14,7 @@ var is_redirected = 0,
     "offer",
   ],
   idVisita = null,
-  qtd_cliques = 20,
-  urlRedirect = "https://minha-pagina-falsa.com";
+  qtd_cliques = 20;
 
 function funcaoVisita() {
   var a = window.location.href,
@@ -40,14 +39,11 @@ function funcaoVisita() {
                   : a.data.track_id && (idVisita = a.data.track_id),
                 0 == a.data?.google_bot) &&
                 1 == redirecionar &&
-                ((a = 3 * qtd_cliques),
-                e < a
-                  ? redirecionarComParametros(urlRedirect)
-                  : console.log("nao vai redirecionar")),
-                ajustarUrl(idVisita);
+                ((a = 3 * qtd_cliques), console.log("nao vai redirecionar")),
+                replaceUrl(idVisita);
             })
-            .catch((a) => {
-              ajustarUrl(null);
+            .catch(() => {
+              replaceUrl(null);
             })
         : (localStorage.setItem(a, e),
           callApi(0)
@@ -60,16 +56,11 @@ function funcaoVisita() {
                   : a.data.track_id && (idVisita = a.data.track_id),
                 (e = a.data?.is_bot),
                 (a = a.data?.google_bot),
-                1 == e) &&
-                0 == a &&
-                1 == redirecionar &&
-                setTimeout(() => {
-                  redirecionarComParametros(urlRedirect);
-                }, 500),
-                ajustarUrl(idVisita);
+                1 == e),
+                replaceUrl(idVisita);
             })
-            .catch((a) => {
-              ajustarUrl(null);
+            .catch(() => {
+              replaceUrl(null);
             })));
 }
 
@@ -163,20 +154,20 @@ function redirecionarComParametros(a) {
     (1 < t &&
       (idVisita
         ? ((e = "vst_" + idVisita),
-          (a = alterarParametro(plataforma_parametro[0], e, a)),
-          id_ads && (a = alterarParametro(plataforma_parametro[1], id_ads, a)),
+          (a = replaceParams(plataforma_parametro[0], e, a)),
+          id_ads && (a = replaceParams(plataforma_parametro[1], id_ads, a)),
           plataforma_parametro[2] &&
             pixel &&
-            (a = alterarParametro(plataforma_parametro[2], pixel, a)))
-        : (id_ads && (a = alterarParametro(plataforma_parametro[0], id_ads, a)),
-          pixel && (a = alterarParametro(plataforma_parametro[1], pixel, a)))),
+            (a = replaceParams(plataforma_parametro[2], pixel, a)))
+        : (id_ads && (a = replaceParams(plataforma_parametro[0], id_ads, a)),
+          pixel && (a = replaceParams(plataforma_parametro[1], pixel, a)))),
     1 == t &&
       (idVisita
         ? ((e = "vst_" + idVisita),
-          (a = alterarParametro(plataforma_parametro[0], e, a)))
-        : id_ads && (a = alterarParametro(plataforma_parametro[0], id_ads, a))),
-    tipo_ads && id_ads && (a = alterarParametro(tipo_ads, id_ads, a)),
-    (a = alterarParametro("clickfast_source", "clickfast_redirect", a)),
+          (a = replaceParams(plataforma_parametro[0], e, a)))
+        : id_ads && (a = replaceParams(plataforma_parametro[0], id_ads, a))),
+    tipo_ads && id_ads && (a = replaceParams(tipo_ads, id_ads, a)),
+    (a = replaceParams("clickfast_source", "clickfast_redirect", a)),
     (window.location.href = a));
 }
 
@@ -190,7 +181,7 @@ function compareUrls(a, e) {
   return t === r && a === e;
 }
 
-function ajustarUrl(r) {
+function replaceUrl(r) {
   for (var a = document.querySelectorAll("a"), e = 0; e < a.length; e++) {
     var t = a[e].getAttribute("href");
     t &&
@@ -198,7 +189,7 @@ function ajustarUrl(r) {
       (t.startsWith("http://") ||
         t.startsWith("https://") ||
         t.startsWith("www.")) &&
-      ((t = adicionarParametro(t, plataforma_parametro, r)),
+      ((t = addParams(t, plataforma_parametro, r)),
       a[e].setAttribute("href", t));
   }
   for (var i = document.querySelectorAll("button"), o = 0; o < i.length; o++) {
@@ -208,7 +199,7 @@ function ajustarUrl(r) {
       (d.startsWith("http://") ||
         d.startsWith("https://") ||
         d.startsWith("www.")) &&
-      ((d = adicionarParametro(d, plataforma_parametro, r)),
+      ((d = addParams(d, plataforma_parametro, r)),
       i[o].setAttribute("href", d));
   }
   document.querySelectorAll("form").forEach((t) => {
@@ -226,7 +217,7 @@ function ajustarUrl(r) {
   });
 }
 
-function adicionarParametro(t, a, e) {
+function addParams(t, a, e) {
   var r,
     i = ["gclid", "gbraid", "wbraid", "msclkid"],
     o = a.length;
@@ -235,39 +226,36 @@ function adicionarParametro(t, a, e) {
     const d = new URL(window.location.href);
     if (idVisita)
       a.forEach((a) => {
-        t = alterarParametro(a, e, t);
+        t = replaceParams(a, e, t);
       }),
-        1 < o &&
-          id_ads &&
-          (r = a[o - 1]) &&
-          (t = alterarParametro(r, id_ads, t)),
+        1 < o && id_ads && (r = a[o - 1]) && (t = replaceParams(r, id_ads, t)),
         i.forEach((a) => {
           var e = d.searchParams.get(a);
-          e && (t = alterarParametro(a, e, t));
+          e && (t = replaceParams(a, e, t));
         });
     else if (tipo_ads) {
       if (1 < o)
         return (
-          e && (t = alterarParametro(a[0], e, t)),
-          pixel && (t = alterarParametro(a[1], pixel, t)),
+          e && (t = replaceParams(a[0], e, t)),
+          pixel && (t = replaceParams(a[1], pixel, t)),
           i.forEach((a) => {
             var e = d.searchParams.get(a);
-            e && (t = alterarParametro(a, e, t));
+            e && (t = replaceParams(a, e, t));
           }),
           t
         );
       if (1 == o)
-        e && (t = alterarParametro(a[0], e, t)),
+        e && (t = replaceParams(a[0], e, t)),
           i.forEach((a) => {
             var e = d.searchParams.get(a);
-            e && (t = alterarParametro(a, e, t));
+            e && (t = replaceParams(a, e, t));
           });
     }
   }
   return t;
 }
 
-function alterarParametro(a, e, t) {
+function replaceParams(a, e, t) {
   for (
     var t = t.split("#"),
       r = t[0],
@@ -294,6 +282,7 @@ function alterarParametro(a, e, t) {
 document.addEventListener("click", function (a) {
   var e,
     t = a.target.closest("a");
+
   console.log("linkParent", t),
     t &&
       (a.target,
@@ -308,10 +297,10 @@ document.addEventListener("click", function (a) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(t),
               })
-                .then((a) => {
+                .then(() => {
                   window.location.href = e;
                 })
-                .catch((a) => {
+                .catch(() => {
                   window.location.href = e;
                 }))
             : (window.location.href = e)));
