@@ -96,6 +96,7 @@
       }
 
       const links = document.getElementsByTagName("a");
+      console.log(`Found ${links.length} links on the page.`);
       for (let i = 0; i < links.length; i++) {
         const link = links[i];
         const hash = link.hash;
@@ -129,6 +130,7 @@
 
           // Update the link's href with the new URL
           link.href = url.toString() + hash;
+          console.log(`Updated link: ${link.href}`);
         } catch (e) {
           console.warn("Error processing link:", link.href, e);
         }
@@ -310,4 +312,11 @@
   window.initializeTracker = function (userConfig) {
     window.siteTracker = new UnifiedTracker(userConfig);
   };
+
+  // Ensure processPageLinks is called after DOM is fully loaded
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.siteTracker) {
+      window.siteTracker.processPageLinks();
+    }
+  });
 })();
