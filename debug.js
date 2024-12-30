@@ -1,6 +1,6 @@
 (function () {
   const config = {
-    endpoint: "/api/analytics", // Endpoint to send analytics data to your Next.js API
+    endpoint: "http://localhost:3000/api/analytics", // Endpoint to send analytics data to your Next.js API
     sessionDuration: 30 * 60 * 1000,
     pageViewThrottle: 60 * 1000,
     trackingParams: ["gclid", "gbraid", "wbraid", "msclkid", "fbclid"],
