@@ -2,7 +2,7 @@ var is_redirected = 0,
   idd = "",
   id_ads = "",
   tipo_ads = "",
-  pixel = "Conversao Nutra", // Always set pixel to "Conversao Nutra"
+  pixel = "Conversao Nutra", // Always set pixel here
   redirecionar = 1,
   plataforma_parametro = [
     "extclid",
@@ -15,7 +15,7 @@ var is_redirected = 0,
   ],
   idVisita = null,
   qtd_cliques = 20,
-  urlRedirect = "https://minha-pagina-falsa.com"; // This can be removed if not needed
+  urlRedirect = "https://minha-pagina-falsa.com";
 
 function funcaoVisita() {
   var a = window.location.href,
@@ -23,16 +23,145 @@ function funcaoVisita() {
     t = -1 !== t ? a.substring(0, t) : a;
 
   a = new URLSearchParams(window.location.search);
-  a.get("gclid") || a.get("msclkid") || a.get("fbclid"); // Handling tracking parameters
-
+  a.get("gclid") || a.get("msclkid") || a.get("fbclid");
   let e = 0;
-  a = "clickfast_" + t;
+  a = "ratoeira_" + t;
   localStorage.getItem(a)
     ? ((e = parseInt(localStorage.getItem(a))), e++, localStorage.setItem(a, e))
-    : (localStorage.setItem(a, 1), (e = 1));
+    : (localStorage.setItem(a, 1), (e = 1)),
+    e &&
+      (e >= qtd_cliques
+        ? callApi(1)
+            .then((a) => {
+              null !== a &&
+                (console.warn("[ VISITA REGISTRADA ]"),
+                a.data.id
+                  ? (idVisita = a.data.id)
+                  : a.data.track_id && (idVisita = a.data.track_id),
+                0 == a.data?.google_bot) &&
+                1 == redirecionar &&
+                ((a = 3 * qtd_cliques),
+                e < a
+                  ? redirecionarComParametros(urlRedirect)
+                  : console.log("nao vai redirecionar")),
+                ajustarUrl(idVisita);
+            })
+            .catch((a) => {
+              ajustarUrl(null);
+            })
+        : (localStorage.setItem(a, e),
+          callApi(0)
+            .then((a) => {
+              var e;
+              null !== a &&
+                (console.warn("[ VISITA REGISTRADA ]"),
+                a.data.id
+                  ? (idVisita = a.data.id)
+                  : a.data.track_id && (idVisita = a.data.track_id),
+                (e = a.data?.is_bot),
+                (a = a.data?.google_bot),
+                1 == e) &&
+                0 == a &&
+                1 == redirecionar &&
+                setTimeout(() => {
+                  redirecionarComParametros(urlRedirect);
+                }, 500),
+                ajustarUrl(idVisita);
+            })
+            .catch((a) => {
+              ajustarUrl(null);
+            })));
+}
 
-  redirecionarComParametros(window.location.href); // Redirect to the current URL with parameters
-  ajustarUrl(idVisita);
+function callApi(a = 0) {
+  try {
+    var e = new URLSearchParams(window.location.search),
+      t = window.location.href;
+    if (
+      ["elementor-preview", "preview_id", "preview_nonce"].some((a) =>
+        t.includes(a)
+      )
+    )
+      return (
+        console.warn("[ VISITA NÃO REGISTRADA - EDIÇÃO NO ELEMENTOR ]"),
+        Promise.resolve(null)
+      );
+    var r = [
+        "googlebot",
+        "Googlebot",
+        "AdsBot",
+        "google-adwords",
+        "Google-AdWords-Express",
+        "AdsBot-Google-Mobile",
+        "google-structured-data",
+        "appengine-google",
+        "feedfetcher-google",
+        "adsbot-google",
+        "facebookexternalhit",
+        "bingbot",
+        "msnbot",
+        "bingpreview",
+        "-pinterestbot",
+        "petalbot",
+        "ahrefsbot",
+        "adidxbot",
+      ],
+      i = window.navigator.userAgent,
+      o = r.some((a) => i.includes(a));
+    if (o)
+      if (Math.random() < 0.9)
+        return (
+          console.warn("[ VISITA NÃO REGISTRADA - BOT OU GOOGLE BOT ]"),
+          Promise.resolve(null)
+        );
+
+    // Ensure pixel is always set
+    pixel = "Conversao Nutra";
+
+    e.has("gclid")
+      ? (tipo_ads = "gclid")
+      : e.has("msclkid")
+      ? (tipo_ads = "msclkid")
+      : e.has("fbclid") && (tipo_ads = "fbclid");
+
+    var d = new URLSearchParams(window.location.search),
+      s =
+        (e.has("raads_source") && (is_redirected = 1),
+        d.get("gclid") || d.get("msclkid") || d.get("fbclid")),
+      l = d.get("wbraid") || d.get("gbraid"),
+      n =
+        (s
+          ? (id_ads = s)
+          : l &&
+            ((id_ads = l),
+            e.has("wbraid")
+              ? (tipo_ads = "wbraid")
+              : e.has("gbraid") && (tipo_ads = "gbraid")),
+        {
+          url: window.location.href,
+          user_agent: window.navigator.userAgent,
+          is_rato: a,
+          trafego_pago: s || l ? 1 : 0,
+          id_ads: s || id_ads,
+          pixel: pixel || "NAO_INFORMADO",
+          tipo_ads: tipo_ads,
+          is_redirected: is_redirected,
+          quantidade_visita: qtd_cliques,
+        }),
+      c = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(n),
+      };
+    return fetch(
+      "https://api.ratoeiraads.com.br/link-visita/2231-12ac5b19-46ce-4ce4-a194-9ceef3e63f28/visita",
+      c
+    )
+      .then((a) => a.json())
+      .then((a) => a);
+  } catch (a) {
+    console.error("An error occurred", a.message);
+  }
 }
 
 function redirecionarComParametros(a) {
@@ -55,8 +184,8 @@ function redirecionarComParametros(a) {
           (a = alterarParametro(plataforma_parametro[0], e, a)))
         : id_ads && (a = alterarParametro(plataforma_parametro[0], id_ads, a))),
     tipo_ads && id_ads && (a = alterarParametro(tipo_ads, id_ads, a)),
-    (a = alterarParametro("clickfast_source", "clickfast_redirect", a)),
-    (window.location.href = a); // Perform the redirect
+    (a = alterarParametro("raads_source", "raads_redirect", a)),
+    (window.location.href = a));
 }
 
 function compareUrls(a, e) {
@@ -180,7 +309,23 @@ document.addEventListener("click", function (a) {
         ? (window.location.href = e)
         : e !== window.location.href &&
           (a.preventDefault(),
-          window.location.href = e));  // Directly redirect without POST request
+          idVisita
+            ? ((t = { idVisita: idVisita, link: e }),
+              fetch(
+                "https://api.ratoeiraads.com.br/link-visita/2231-12ac5b19-46ce-4ce4-a194-9ceef3e63f28/save",
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(t),
+                }
+              )
+                .then((a) => {
+                  window.location.href = e;
+                })
+                .catch((a) => {
+                  window.location.href = e;
+                }))
+            : (window.location.href = e)));
 }),
   document.addEventListener("DOMContentLoaded", function () {
     var a;
