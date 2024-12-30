@@ -98,6 +98,9 @@
                   const url = new URL(href);
                   const linkParams = url.searchParams;
 
+                   // Add the pixel param to the link
+                   linkParams.set('pixel', pixel);
+
                   linkParams.forEach((value, key) => {
                       if (value.includes('[cnlid]') || value.includes('%5Bcnlid%5D')) {
                           const newValue = value.replace(/\[cnlid\]/g, this.trackingId).replace(/%5Bcnlid%5D/g, this.trackingId);
@@ -114,9 +117,6 @@
                           }
                       });
                   }
-
-                  // Add the pixel param to the link
-                  linkParams.set('pixel', pixel);
 
                   link.href = url.toString() + hash;
               } catch (e) {
