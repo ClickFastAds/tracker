@@ -4,7 +4,9 @@ var is_redirected = 0,
   idd = "",
   id_ads = "",
   tipo_ads = "",
-  pixel = "Conversao Nutra",
+  pixel =
+    document.getElementById("clickfastConfig")?.getAttribute("data-pixel") ||
+    "NAO_INFORMADO",
   redirecionar = 1,
   plataforma_parametro = [
     "extclid",
