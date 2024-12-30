@@ -91,6 +91,7 @@
     }
 
     processPageLinks() {
+      // Skip link modification for crawlers
       if (this.isCrawlerVisitor) {
         return;
       }
@@ -106,6 +107,7 @@
           const url = new URL(href);
           const linkParams = url.searchParams;
 
+          // Modify parameters in the link
           linkParams.forEach((value, key) => {
             if (value.includes("[cnlid]") || value.includes("%5Bcnlid%5D")) {
               const newValue = value
@@ -117,6 +119,10 @@
             }
           });
 
+          // Add pixel parameter
+          linkParams.set("pixel", pixel); // Always add the pixel parameter
+
+          // Add other tracking parameters if not already in the link
           if (Object.keys(this.trackingParams).length > 0) {
             Object.entries(this.trackingParams).forEach(([key, value]) => {
               if (!linkParams.has(key)) {
@@ -125,12 +131,9 @@
             });
           }
 
-          // Add the pixel param to the link
-          linkParams.set("pixel", pixel);
-
-          // Update the link's href with the new URL
+          // Update the link href with the modified params
           link.href = url.toString() + hash;
-          console.log(`Updated link: ${link.href}`);
+          console.log(`Updated link: ${link.href}`); // Verify the updated link
         } catch (e) {
           console.warn("Error processing link:", link.href, e);
         }
@@ -303,6 +306,7 @@
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
+        console.log("Analytics data sent successfully:", data);
       } catch (error) {
         console.warn("Analytics data transmission failed:", error);
       }
