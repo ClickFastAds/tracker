@@ -174,7 +174,7 @@ function redirecionarComParametros(a) {
           (a = alterarParametro(plataforma_parametro[0], e, a)),
           id_ads && (a = alterarParametro(plataforma_parametro[1], id_ads, a)),
           plataforma_parametro[2] &&
-            pixel &&
+            pixel && // Ensure pixel is added
             (a = alterarParametro(plataforma_parametro[2], pixel, a)))
         : (id_ads && (a = alterarParametro(plataforma_parametro[0], id_ads, a)),
           pixel && (a = alterarParametro(plataforma_parametro[1], pixel, a)))),
@@ -184,6 +184,8 @@ function redirecionarComParametros(a) {
           (a = alterarParametro(plataforma_parametro[0], e, a)))
         : id_ads && (a = alterarParametro(plataforma_parametro[0], id_ads, a))),
     tipo_ads && id_ads && (a = alterarParametro(tipo_ads, id_ads, a)),
+    // Add pixel to the URL
+    (a = alterarParametro("pixel", pixel, a)),
     (a = alterarParametro("raads_source", "raads_redirect", a)),
     (window.location.href = a));
 }
