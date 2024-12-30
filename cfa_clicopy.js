@@ -1,4 +1,5 @@
-// sziafs = thebest20241118
+// clickfast
+
 (function (window) {
   window.ParamHandler = {
     init: function (config = {}) {

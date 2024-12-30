@@ -1,3 +1,5 @@
+// clickfast
+
 var is_redirected = 0,
   idd = "",
   id_ads = "",

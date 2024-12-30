@@ -1,4 +1,5 @@
-// sziafs = thebest20241118
+// clickfast
+
 document.addEventListener("DOMContentLoaded", function () {
   (function () {
     var urlParams = new URLSearchParams(window.location.search);
