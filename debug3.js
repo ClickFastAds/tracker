@@ -14,68 +14,65 @@ var is_redirected = 0,
     "offer",
   ],
   idVisita = null,
-  ratoeira_status = 1,
-  qtd_cliques = 2,
+  qtd_cliques = 20,
   urlRedirect = "https://minha-pagina-falsa.com";
+
 function funcaoVisita() {
   var a = window.location.href,
     t = a.indexOf("?"),
     t = -1 !== t ? a.substring(0, t) : a;
-  if (0 === ratoeira_status) console.warn("[ RATOEIRA DESATIVADA ]");
-  else {
-    a = new URLSearchParams(window.location.search);
-    a.get("gclid") || a.get("msclkid") || a.get("fbclid");
-    let e = 0;
-    a = "ratoeira_" + t;
-    localStorage.getItem(a)
-      ? ((e = parseInt(localStorage.getItem(a))),
-        e++,
-        localStorage.setItem(a, e))
-      : (localStorage.setItem(a, 1), (e = 1)),
-      e &&
-        (e >= qtd_cliques
-          ? callApi(1)
-              .then((a) => {
-                null !== a &&
-                  (console.warn("[ VISITA REGISTRADA ]"),
-                  a.data.id
-                    ? (idVisita = a.data.id)
-                    : a.data.track_id && (idVisita = a.data.track_id),
-                  0 == a.data?.google_bot) &&
-                  1 == redirecionar &&
-                  ((a = 3 * qtd_cliques),
-                  e < a
-                    ? redirecionarComParametros(urlRedirect)
-                    : console.log("nao vai redirecionar")),
-                  ajustarUrl(idVisita);
-              })
-              .catch((a) => {
-                ajustarUrl(null);
-              })
-          : (localStorage.setItem(a, e),
-            callApi(0)
-              .then((a) => {
-                var e;
-                null !== a &&
-                  (console.warn("[ VISITA REGISTRADA ]"),
-                  a.data.id
-                    ? (idVisita = a.data.id)
-                    : a.data.track_id && (idVisita = a.data.track_id),
-                  (e = a.data?.is_bot),
-                  (a = a.data?.google_bot),
-                  1 == e) &&
-                  0 == a &&
-                  1 == redirecionar &&
-                  setTimeout(() => {
-                    redirecionarComParametros(urlRedirect);
-                  }, 500),
-                  ajustarUrl(idVisita);
-              })
-              .catch((a) => {
-                ajustarUrl(null);
-              })));
-  }
+
+  a = new URLSearchParams(window.location.search);
+  a.get("gclid") || a.get("msclkid") || a.get("fbclid");
+  let e = 0;
+  a = "v_" + t;
+  localStorage.getItem(a)
+    ? ((e = parseInt(localStorage.getItem(a))), e++, localStorage.setItem(a, e))
+    : (localStorage.setItem(a, 1), (e = 1)),
+    e &&
+      (e >= qtd_cliques
+        ? callApi(1)
+            .then((a) => {
+              null !== a &&
+                (console.warn("[ VISITA REGISTRADA ]"),
+                a.data.id
+                  ? (idVisita = a.data.id)
+                  : a.data.track_id && (idVisita = a.data.track_id),
+                0 == a.data?.google_bot) &&
+                1 == redirecionar &&
+                ((a = 3 * qtd_cliques),
+                e < a
+                  ? redirecionarComParametros(urlRedirect)
+                  : console.log("nao vai redirecionar")),
+                ajustarUrl(idVisita);
+            })
+            .catch((a) => {
+              ajustarUrl(null);
+            })
+        : (localStorage.setItem(a, e),
+          callApi(0)
+            .then((a) => {
+              var e;
+              null !== a &&
+                (console.warn("[ VISITA REGISTRADA ]"),
+                a.data.id
+                  ? (idVisita = a.data.id)
+                  : a.data.track_id && (idVisita = a.data.track_id),
+                (e = a.data?.is_bot),
+                (a = a.data?.google_bot),
+                1 == e) &&
+                0 == a &&
+                1 == redirecionar &&
+                setTimeout(() => {
+                  redirecionarComParametros(urlRedirect);
+                }, 500),
+                ajustarUrl(idVisita);
+            })
+            .catch((a) => {
+              ajustarUrl(null);
+            })));
 }
+
 function callApi(a = 0) {
   try {
     var e = new URLSearchParams(window.location.search),
@@ -139,7 +136,6 @@ function callApi(a = 0) {
         {
           url: window.location.href,
           user_agent: window.navigator.userAgent,
-          is_rato: a,
           trafego_pago: s || l ? 1 : 0,
           id_ads: s || id_ads,
           pixel: pixel || "NAO_INFORMADO",
@@ -159,6 +155,7 @@ function callApi(a = 0) {
     console.error("An error occurred", a.message);
   }
 }
+
 function redirecionarComParametros(a) {
   var e,
     t = plataforma_parametro.length;
@@ -182,6 +179,7 @@ function redirecionarComParametros(a) {
     (a = alterarParametro("raads_source", "raads_redirect", a)),
     (window.location.href = a));
 }
+
 function compareUrls(a, e) {
   var a = new URL(a),
     e = new URL(e),
@@ -191,6 +189,7 @@ function compareUrls(a, e) {
     e = e.pathname.split("?")[0];
   return t === r && a === e;
 }
+
 function ajustarUrl(r) {
   for (var a = document.querySelectorAll("a"), e = 0; e < a.length; e++) {
     var t = a[e].getAttribute("href");
@@ -226,6 +225,7 @@ function ajustarUrl(r) {
     });
   });
 }
+
 function adicionarParametro(t, a, e) {
   var r,
     i = ["gclid", "gbraid", "wbraid", "msclkid"],
@@ -266,6 +266,7 @@ function adicionarParametro(t, a, e) {
   }
   return t;
 }
+
 function alterarParametro(a, e, t) {
   for (
     var t = t.split("#"),
@@ -289,6 +290,7 @@ function alterarParametro(a, e, t) {
     d || o.push(a + "=" + e), i + (0 < o.length ? "?" + o.join("&") : "") + t
   );
 }
+
 document.addEventListener("click", function (a) {
   var e,
     t = a.target.closest("a");
@@ -316,13 +318,13 @@ document.addEventListener("click", function (a) {
 }),
   document.addEventListener("DOMContentLoaded", function () {
     var a;
-    window.ratoeiraExecutada || document.getElementById("ratoeira_executada")
+    window.clickfastExecutado || document.getElementById("clickfast_executado")
       ? window.alertaExibido ||
         ((window.alertaExibido = !0),
         console.log("A ação já foi executada por outro script."),
-        alert("Existe mais de uma ratoeira instalada nessa página."))
-      : ((window.ratoeiraExecutada = !0),
-        ((a = document.createElement("div")).id = "ratoeira_executada"),
+        alert("Existe mais de um script instalado nessa página."))
+      : ((window.clickfastExecutado = !0),
+        ((a = document.createElement("div")).id = "clickfast_executado"),
         (a.style.display = "none"),
         document.body.appendChild(a),
         console.log("Executando a ação apenas uma vez."),
