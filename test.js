@@ -13,26 +13,21 @@ var is_redirected = 0,
     "ad",
     "offer",
   ],
-  idVisita = null,
-  clickfast_status = 1;
+  idVisita = null
 
 function funcaoVisita() {
   var a = window.location.href,
     t = a.indexOf("?"),
     t = -1 !== t ? a.substring(0, t) : a;
-  if (0 === clickfast_status) console.warn("[ CLICKFAST DESATIVADO ]");
-  else {
-    a = new URLSearchParams(window.location.search);
-    a.get("gclid") || a.get("msclkid") || a.get("fbclid");
 
-    a = "clickfast_" + t;
-    localStorage.getItem(a)
-      ? (localStorage.setItem(a, parseInt(localStorage.getItem(a)) + 1))
-      : localStorage.setItem(a, 1);
-
-    redirecionarComParametros(window.location.href);  // Redirect to the current URL with parameters
-    ajustarUrl(idVisita);
-  }
+  a = new URLSearchParams(window.location.search);
+  a.get("gclid") || a.get("msclkid") || a.get("fbclid");
+  let e = 0;
+  a = "clickfast_" + t;
+  localStorage.getItem(a)
+    ? ((e = parseInt(localStorage.getItem(a))), e++, localStorage.setItem(a, e))
+    : (localStorage.setItem(a, 1), (e = 1)),
+    e;
 }
 
 function redirecionarComParametros(a) {
@@ -56,7 +51,7 @@ function redirecionarComParametros(a) {
         : id_ads && (a = alterarParametro(plataforma_parametro[0], id_ads, a))),
     tipo_ads && id_ads && (a = alterarParametro(tipo_ads, id_ads, a)),
     (a = alterarParametro("clickfast_source", "clickfast_redirect", a)),
-    (window.location.href = a);  // Perform the redirect
+    (window.location.href = a));
 }
 
 function compareUrls(a, e) {
@@ -180,10 +175,7 @@ document.addEventListener("click", function (a) {
         ? (window.location.href = e)
         : e !== window.location.href &&
           (a.preventDefault(),
-          idVisita
-            ? ((t = { idVisita: idVisita, link: e }),
-              window.location.href = e)  // Direct redirect without POST request
-            : (window.location.href = e)));
+          (window.location.href = e)));
 }),
   document.addEventListener("DOMContentLoaded", function () {
     var a;
@@ -191,7 +183,7 @@ document.addEventListener("click", function (a) {
       ? window.alertaExibido ||
         ((window.alertaExibido = !0),
         console.log("A ação já foi executada por outro script."),
-        alert("Existe mais de uma clickfast instalada nessa página."))
+        alert("Existe mais de um script instalado nessa página."))
       : ((window.clickfastExecutado = !0),
         ((a = document.createElement("div")).id = "clickfast_executado"),
         (a.style.display = "none"),
